@@ -1,0 +1,31 @@
+version: '3'
+services:
+  information_tape:
+    build: .
+    container_name: information_tape
+    ports:
+      - 8080:8080
+    depends_on:
+      - flyway
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/information_tape
+      SPRING_DATASOURCE_PASSWORD: information_tape
+      SPRING_DATASOURCE_USERNAME: information_tape
+  flyway:
+    image: flyway/flyway
+    container_name: information_tape-flyway
+    command: -url=jdbc:postgresql://postgres-db:5432/information_tape -user=information_tape -password=information_tape -connectRetries=60 migrate
+    volumes:
+      - ./src/main/resources/db/migration/:/flyway/sql
+    depends_on:
+      - postgres-db
+  postgres-db:
+    container_name: information_tape-postgres
+    image: postgres:latest
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: information_tape
+      POSTGRES_DB: information_tape
+      POSTGRES_PASSWORD: information_tape
+

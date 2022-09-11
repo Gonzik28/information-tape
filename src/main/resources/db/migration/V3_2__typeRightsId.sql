@@ -1,0 +1,1 @@
+ALTER TABLE rights ALTER id TYPE text;

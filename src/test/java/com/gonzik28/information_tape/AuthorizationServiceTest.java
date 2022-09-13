@@ -1,9 +1,7 @@
 package com.gonzik28.information_tape;
 
 import com.gonzik28.information_tape.dto.RequestAuthorizationDto;
-import com.gonzik28.information_tape.dto.RequestUserDto;
 import com.gonzik28.information_tape.dto.ResponseAuthorizationDto;
-import com.gonzik28.information_tape.dto.ResponseUserDto;
 import com.gonzik28.information_tape.dto.utils.AuthorizationUtils;
 import com.gonzik28.information_tape.entity.AuthorizationEntity;
 import com.gonzik28.information_tape.entity.UserEntity;
@@ -19,11 +17,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.Optional;
-import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -33,17 +30,6 @@ public class AuthorizationServiceTest {
 
     @InjectMocks
     private AuthorizationService authorizationService;
-
-    @Autowired
-    @InjectMocks
-    private AuthorizationService authorizationAutoService;
-
-    @Autowired
-    @InjectMocks
-    private UserService userService;
-
-    @SpyBean
-    private AuthorizationRepository authorizationAutoRepository;
 
     @Mock
     private AuthorizationRepository authorizationRepository;
@@ -115,35 +101,6 @@ public class AuthorizationServiceTest {
         assertNotNull(authorization);
         assertSame("001", authorization.getId());
         assertSame("@Ladoga", authorization.getLogin());
-
-    }
-
-    @Test
-    public void deleteTest() {
-        LocalDate birthDate = LocalDate.of(1995, 07, 17);
-
-        RequestUserDto userDto = new RequestUserDto();
-        userDto.setId(UUID.randomUUID().toString());
-        userDto.setFirstName("Никита");
-        userDto.setLastName("Баринов");
-        userDto.setBirthDate(birthDate);
-        ResponseUserDto responseUserDto = userService.create(userDto);
-
-        RequestAuthorizationDto requestAuthorizationDto = new RequestAuthorizationDto();
-        requestAuthorizationDto.setUserId(responseUserDto.getId());
-        requestAuthorizationDto.setLogin("@Nikita_Barinov");
-        requestAuthorizationDto.setPassword("пароль");
-
-        ResponseAuthorizationDto authorization = authorizationAutoService.create(requestAuthorizationDto);
-
-        boolean isExistBeforeDelete = authorizationAutoRepository.findById(authorization.getId()).isPresent();
-
-        authorizationAutoService.delete(authorization.getId());
-
-        boolean isExistAfterDelete = authorizationAutoRepository.findById(authorization.getId()).isPresent();
-
-        assertTrue(isExistBeforeDelete);
-        assertFalse(isExistAfterDelete);
     }
 
 }

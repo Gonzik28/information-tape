@@ -1,6 +1,7 @@
 package com.gonzik28.information_tape;
 
-import com.gonzik28.information_tape.dto.*;
+import com.gonzik28.information_tape.dto.RequestCommentDto;
+import com.gonzik28.information_tape.dto.ResponseCommentDto;
 import com.gonzik28.information_tape.dto.utils.CommentUtils;
 import com.gonzik28.information_tape.entity.CommentEntity;
 import com.gonzik28.information_tape.entity.TweetEntity;
@@ -9,21 +10,16 @@ import com.gonzik28.information_tape.repository.CommentRepository;
 import com.gonzik28.information_tape.repository.TweetRepository;
 import com.gonzik28.information_tape.repository.UserRepository;
 import com.gonzik28.information_tape.service.CommentService;
-import com.gonzik28.information_tape.service.TweetService;
-import com.gonzik28.information_tape.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.Optional;
-import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -41,21 +37,6 @@ public class CommentServiceTest {
 
     @Mock
     private TweetRepository tweetRepository;
-
-    @Autowired
-    @InjectMocks
-    private UserService userService;
-
-    @Autowired
-    @InjectMocks
-    private TweetService tweetService;
-
-    @Autowired
-    @InjectMocks
-    private CommentService commentAutoService;
-
-    @SpyBean
-    private CommentRepository commentAutoRepository;
 
     @Test
     public void findByIdTest() {
@@ -106,46 +87,6 @@ public class CommentServiceTest {
         assertSame("012", comment.getId());
         assertSame("111", comment.getUser().getId());
         assertSame("Так себе из тебя актер", comment.getComment());
-    }
-
-    @Test
-    public void deleteTest() {
-        LocalDate birthDate = LocalDate.of(1995, 07, 17);
-
-        RequestUserDto userTweet = new RequestUserDto();
-        userTweet.setId(UUID.randomUUID().toString());
-        userTweet.setFirstName("Никита");
-        userTweet.setLastName("Баринов");
-        userTweet.setBirthDate(birthDate);
-        ResponseUserDto responseUserTweetDto = userService.create(userTweet);
-
-        RequestUserDto userComment = new RequestUserDto();
-        userComment.setId(UUID.randomUUID().toString());
-        userComment.setFirstName("Игорь");
-        userComment.setLastName("Живунов");
-        userComment.setBirthDate(birthDate);
-        ResponseUserDto responseUserCommentDto = userService.create(userComment);
-
-        RequestTweetDto requestTweetDto = new RequestTweetDto();
-        requestTweetDto.setTweet("Hello world");
-        requestTweetDto.setUserId(responseUserTweetDto.getId());
-        ResponseTweetDto tweet = tweetService.create(requestTweetDto);
-
-        RequestCommentDto requestCommentDto = new RequestCommentDto();
-        requestCommentDto.setUserId(responseUserCommentDto.getId());
-        requestCommentDto.setTweetId(tweet.getId());
-        requestCommentDto.setComment("Hi");
-
-        ResponseCommentDto comment = commentAutoService.create(requestCommentDto);
-
-        boolean isExistBeforeDelete = commentAutoRepository.findById(comment.getId()).isPresent();
-
-        commentAutoService.delete(comment.getId());
-
-        boolean isExistAfterDelete = commentAutoRepository.findById(comment.getId()).isPresent();
-
-        assertTrue(isExistBeforeDelete);
-        assertFalse(isExistAfterDelete);
     }
 
 }

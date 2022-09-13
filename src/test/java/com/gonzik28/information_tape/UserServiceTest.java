@@ -9,15 +9,14 @@ import com.gonzik28.information_tape.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -30,13 +29,6 @@ public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @SpyBean
-    private UserRepository userAutoRepository;
-
-    @Autowired
-    @InjectMocks
-    private UserService userAutoService;
 
 
     @Test
@@ -109,24 +101,4 @@ public class UserServiceTest {
         assertSame(date, userTest.getBirthDate());
     }
 
-    @Test
-    public void deleteTest() {
-        LocalDate date = LocalDate.of(2020, 02, 12);
-
-        RequestUserDto requestUserDto = new RequestUserDto();
-        requestUserDto.setId("101");
-        requestUserDto.setBirthDate(date);
-        requestUserDto.setFirstName("Margo");
-        requestUserDto.setLastName("Landik");
-        ResponseUserDto user = userAutoService.create(requestUserDto);
-
-        boolean isExistBeforeDelete = userAutoRepository.findById(user.getId()).isPresent();
-
-        userAutoService.delete(user.getId());
-
-        boolean isExistAfterDelete = userAutoRepository.findById(user.getId()).isPresent();
-
-        assertTrue(isExistBeforeDelete);
-        assertFalse(isExistAfterDelete);
-    }
 }

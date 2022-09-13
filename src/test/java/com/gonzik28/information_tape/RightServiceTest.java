@@ -2,29 +2,23 @@ package com.gonzik28.information_tape;
 
 import com.gonzik28.information_tape.config.Right;
 import com.gonzik28.information_tape.dto.RequestRightDto;
-import com.gonzik28.information_tape.dto.RequestUserDto;
 import com.gonzik28.information_tape.dto.ResponseRightDto;
-import com.gonzik28.information_tape.dto.ResponseUserDto;
 import com.gonzik28.information_tape.dto.utils.RightUtils;
 import com.gonzik28.information_tape.entity.RightEntity;
 import com.gonzik28.information_tape.entity.UserEntity;
 import com.gonzik28.information_tape.repository.RightRepository;
 import com.gonzik28.information_tape.repository.UserRepository;
 import com.gonzik28.information_tape.service.RightService;
-import com.gonzik28.information_tape.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.Optional;
-import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -34,21 +28,12 @@ public class RightServiceTest {
     @InjectMocks
     private RightService rightService;
 
-    @Autowired
-    private UserService userService;
-
     @Mock
     private RightRepository rightRepository;
 
     @Mock
     private UserRepository userRepository;
 
-    @Autowired
-    @InjectMocks
-    private RightService rightAutoService;
-
-    @SpyBean
-    private RightRepository rightAutoRepository;
 
     @Test
     public void findByIdTest() {
@@ -118,30 +103,4 @@ public class RightServiceTest {
         assertSame(Right.admin, rightTest.getUserRight());
     }
 
-    @Test
-    public void deleteTest() {
-        LocalDate birthDate = LocalDate.of(1995, 07, 17);
-
-        RequestUserDto userDto = new RequestUserDto();
-        userDto.setId(UUID.randomUUID().toString());
-        userDto.setFirstName("Никита");
-        userDto.setLastName("Баринов");
-        userDto.setBirthDate(birthDate);
-        ResponseUserDto responseUserDto = userService.create(userDto);
-
-        RequestRightDto requestRightDto = new RequestRightDto();
-        requestRightDto.setUserId(responseUserDto.getId());
-        requestRightDto.setUserRight(Right.admin);
-
-        ResponseRightDto right = rightAutoService.create(requestRightDto);
-
-        boolean isExistBeforeDelete = rightAutoRepository.findById(right.getId()).isPresent();
-
-        rightAutoService.delete(right.getId());
-
-        boolean isExistAfterDelete = rightAutoRepository.findById(right.getId()).isPresent();
-
-        assertTrue(isExistBeforeDelete);
-        assertFalse(isExistAfterDelete);
-    }
 }

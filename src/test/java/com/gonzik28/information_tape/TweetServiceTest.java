@@ -1,9 +1,7 @@
 package com.gonzik28.information_tape;
 
 import com.gonzik28.information_tape.dto.RequestTweetDto;
-import com.gonzik28.information_tape.dto.RequestUserDto;
 import com.gonzik28.information_tape.dto.ResponseTweetDto;
-import com.gonzik28.information_tape.dto.ResponseUserDto;
 import com.gonzik28.information_tape.dto.utils.TweetUtils;
 import com.gonzik28.information_tape.entity.CommentEntity;
 import com.gonzik28.information_tape.entity.TweetEntity;
@@ -11,22 +9,18 @@ import com.gonzik28.information_tape.entity.UserEntity;
 import com.gonzik28.information_tape.repository.TweetRepository;
 import com.gonzik28.information_tape.repository.UserRepository;
 import com.gonzik28.information_tape.service.TweetService;
-import com.gonzik28.information_tape.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -42,17 +36,6 @@ public class TweetServiceTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @Autowired
-    @InjectMocks
-    private UserService userService;
-
-    @Autowired
-    @InjectMocks
-    private TweetService tweetAutoService;
-
-    @SpyBean
-    private TweetRepository tweetAutoRepository;
 
     @Test
     public void findByIdTest() {
@@ -108,33 +91,6 @@ public class TweetServiceTest {
         assertSame("125", tweet.getId());
         assertSame("111", tweet.getResponseUserDto().getId());
         assertSame("Вся жизнь театр", tweet.getTweet());
-    }
-
-    @Test
-    public void deleteTest() {
-        LocalDate birthDate = LocalDate.of(1995, 07, 17);
-
-        RequestUserDto userTweet = new RequestUserDto();
-        userTweet.setId(UUID.randomUUID().toString());
-        userTweet.setFirstName("Никита");
-        userTweet.setLastName("Баринов");
-        userTweet.setBirthDate(birthDate);
-        ResponseUserDto responseUserTweetDto = userService.create(userTweet);
-
-        RequestTweetDto requestTweetDto = new RequestTweetDto();
-        requestTweetDto.setTweet("Hello world");
-        requestTweetDto.setUserId(responseUserTweetDto.getId());
-
-        ResponseTweetDto tweet = tweetAutoService.create(requestTweetDto);
-
-        boolean isExistBeforeDelete = tweetAutoRepository.findById(tweet.getId()).isPresent();
-
-        tweetAutoService.delete(tweet.getId());
-
-        boolean isExistAfterDelete = tweetAutoRepository.findById(tweet.getId()).isPresent();
-
-        assertTrue(isExistBeforeDelete);
-        assertFalse(isExistAfterDelete);
     }
 
 }
